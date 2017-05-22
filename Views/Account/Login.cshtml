@@ -1,0 +1,106 @@
+﻿@using webApp_SignalRLab.ViewModels;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = "登入";
+    Layout = "~/Views/Shared/_NgLayoutPage1.cshtml";
+    const Boolean DEBUG_MODE = false;
+    LastErrMsg lastErr = ViewBag.lastErr; //錯誤訊息！
+    // ViewBag.Trace 追縱問題點
+}
+
+@* TRACE *@
+@if (DEBUG_MODE)
+{
+    <div class="well " style="background-color:hotpink">
+        <p>
+            <label>vcode:&nbsp;</label>@ViewBag.vcode<br />
+            <label>Trace:&nbsp;</label>@ViewBag.Trace.ToString()
+        </p>
+    </div>
+}
+
+@* 已登入 *@
+@if (@Request.IsAuthenticated)
+{
+    @* 取得登入資訊 *@
+    FormsIdentity userIdentity = User.Identity as FormsIdentity;
+    FormsAuthenticationTicket userTicket = userIdentity.Ticket;
+    LoginUserInfo loginUser = JsonConvert.DeserializeObject<LoginUserInfo>(userTicket.UserData);
+
+    @* 顯示登入資訊 *@
+    <div class="container">
+        <h2>已登入</h2>
+        <div class="panel panel-info">
+            <div class="panel-heading">用戶資訊</div>
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt>帳號</dt>
+                    <dd>@userIdentity.Name</dd>
+                    <dt>姓名</dt>
+                    <dd>@loginUser.cName</dd>
+                    <dt>到期時間</dt>
+                    <dd>@userTicket.Expiration.ToString()</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    @* 未登入 *@
+    <div class="container">
+        <h2>@ViewBag.Title</h2>
+        <p>請輸入您的帳號密碼，系統將開啟工作平台。</p>
+
+        <form action="@Url.Action("Login","Account")" class="form-horizontal" method="post" role="form" name="mainForm" onsubmit="enctext()">
+            @Html.AntiForgeryToken()
+            <hr />
+
+            @if (lastErr != null)
+            {
+                <div class="alert alert-warning alert-dismissable fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>@lastErr.errType</strong> @lastErr.errMsg
+                </div>
+            }
+
+            <input type="hidden" name="ReturnUrl" value="@Request["ReturnUrl"]" />
+            <div class="form-group">
+                <label class="col-sm-2 control-label">帳號</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" id="idname" placeholder="請輸入帳號" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">密碼</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="password" id="idpwd" placeholder="請輸入密碼" required />
+                    <input type="hidden" id="idnamepwd" name="idnamepwd" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="rememberMe" value="yes" checked="checked">記住我</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" id="send" class="btn btn-primary btn-lg btn-block">登入</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <script src="~/Scripts/NgApp/misc.js"></script>
+    <script type="text/javascript">
+
+        function enctext() {
+            @* $('#idpwdEnc').val(misc_encrypttext($('#idpwd').val())); *@
+            $('#idnamepwd').val(misc_encrypttext(btoa(JSON.stringify({ idpwd: $('#idpwd').val(), vcode: '@ViewBag.vcode', idname: $('#idname').val() }))));
+            $('#send').prop("disabled", true);
+        }
+
+    </script>
+}

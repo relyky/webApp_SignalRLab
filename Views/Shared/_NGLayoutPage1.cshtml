@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html ng-app="appMain">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="shortcut icon" href="~/img/asvticon.png" />
+    <title></title>
+    @*@Styles.Render("~/css-min")*@
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/angular-block-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/ui-bootstrap-csp.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    @RenderSection("css_style", required: false)
+    @*@Scripts.Render("~/js-min")*@
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/angular-animate.min.js"></script>
+    <script src="~/Scripts/angular-sanitize.min.js"></script>
+    <script src="~/Scripts/angular-block-ui.min.js"></script>
+    <script src="~/Scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+    @* <script src="~/Scripts/NgApp/appMain.js"></script> *@
+    @Scripts.Render("~/bundles/ngapp")
+    <script type="text/javascript">
+        @{
+            DateTime startTime = (DateTime)Session["SESSION_START_TIME"];
+            long sessionTimerSeconds = (long)DateTime.Now.Subtract(startTime).TotalSeconds;
+        }
+        var sessionTimerSeconds = @sessionTimerSeconds;
+        setInterval(function () {
+            sessionTimerSeconds++;
+            $('p[sessionTimerSeconds]').html(Math.floor(sessionTimerSeconds / 60) + ':' + '00'.concat(sessionTimerSeconds % 60).slice(-2));
+        }, 1000);
+    </script>
+    @RenderSection("javascripts", required: false)
+</head>
+<body ng-controller="appController" ng-cloak>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://www.asiavista.com.tw/"><img src="~/img/asvtlogo.png" /></a>
+                <p sessiontimerseconds class="navbar-text visible-xs"></p>
+            </div>
+            <div class="collapse navbar-collapse" id="topNavbar">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("首頁", "Index", "Home")</li>
+                    <li><a href="SignalR.Sample/StockTicker.html">SignalR.Sample</a></li>
+                    <li>@Html.ActionLink("Joey Chat", "Index", "JoeyChat")</li>
+                    <li>@Html.ActionLink("Monitor", "Index", "Monitor")</li>
+                    <li>@Html.ActionLink("Inbox", "Index", "Inbox")</li>
+                    <li>@Html.ActionLink("關於", "About", "Home")</li>
+                    <li>@Html.ActionLink("連絡方式", "Contact", "Home")</li>
+                </ul>
+                @*@Html.Partial("_LoginPartial")*@
+            </div>
+        </div>
+    </nav>
+    @RenderBody()
+    @Html.Partial("_AsvtFooterPartial")
+</body>
+</html>
+
