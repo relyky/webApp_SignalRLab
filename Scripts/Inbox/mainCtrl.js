@@ -206,6 +206,12 @@ app.controller('mainCtrl', ['$scope', '$log', 'appValue', 'apiSvc', function ($s
             });
     }
 
+    //# method
+    $scope.resetDataList = function () {
+        $log.log('on: resetDataList');
+        $scope.dataList = [];
+    };
+
     ////# event handler
     //$scope.doRefresh = function () {
     //    $log.log('on: doRefresh...');

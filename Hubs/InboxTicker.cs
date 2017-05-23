@@ -116,7 +116,7 @@ namespace webApp_SignalRLab.Hubs
                     // Broadcast notification.
                     NotifyMessage msg = new NotifyMessage()
                     {
-                        notifyType = "info",
+                        notifyType = new string[] { "success","info","warning","danger" }[DateTime.Now.Ticks % 4],
                         notifyMsg = string.Format("伺服器時間 {0:HH:mm:ss} for {1}", DateTime.Now, idName)
                     };
 
